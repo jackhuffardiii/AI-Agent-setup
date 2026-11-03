@@ -2,14 +2,13 @@
   "name": "claude-desktop-mods",
   "owner": { "name": "Jack Huffard" },
   "metadata": {
-    "description": "Claude Code plugins for R, Shiny and baseball analytics work."
+    "description": "Jack Huffard's Claude Code setup: mods and skills."
   },
   "plugins": [
     {
-      "name": "rshiny",
-      "source": { "source": "github", "repo": "tazovsky/claude-rshiny-plugin" },
-      "description": "Launch R Shiny apps, drive them with Playwright, and watch server logs (/rshiny-run, /rshiny-stop, /rshiny-logs, /rshiny-status).",
-      "homepage": "https://github.com/tazovsky/claude-rshiny-plugin"
+      "name": "auto-handoff",
+      "source": "./mods/auto-handoff",
+      "description": "At 300k context tokens, runs the handoff skill once the current turn ends."
     }
   ]
 }
