@@ -1,52 +1,70 @@
 # claude-desktop-mods
 
-Claude add-ons for R, Shiny and baseball analytics.
-
-| Add-on | What it does | Type |
-| --- | --- | --- |
-| [claude-rshiny-plugin](https://github.com/tazovsky/claude-rshiny-plugin) | Launch a Shiny app, click through it in a real browser, and watch server logs for errors | Claude Code plugin |
-| [ClaudeR](https://github.com/IMNMV/ClaudeR) | Lets Claude run code, see objects and plots, and edit files in your live RStudio session | MCP server (`r-studio`) |
-| [mlb-mcp](https://github.com/etweisberg/mlb-mcp) | 46 tools: MLB StatsAPI, Statcast (arsenals, expected stats, percentiles), pybaseball/FanGraphs/B-Ref, strike-zone and spray-chart plots | MCP server (`mlb-stats`) |
-| [Playwright MCP](https://github.com/microsoft/playwright-mcp) | Browser control, required by the Shiny plugin | MCP server (`playwright`) |
-
-## Prerequisites
-
-- R with `shiny` and `devtools`
-- [uv](https://docs.astral.sh/uv/getting-started/installation/) (`uvx` runs the Python MCP servers with no manual pip installs)
-- Node.js (`npx` runs Playwright MCP)
-
-## Claude Code
+The Claude Code setup I use for baseball analytics, modeling, and general project work: one custom mod and the skills I rely on.
 
 ```
-git clone https://github.com/jackhuffardiii/claude-desktop-mods
-cd claude-desktop-mods
-claude
+.claude-plugin/        Plugin marketplace manifest
+mods/auto-handoff/     Hands long sessions off to a fresh one
+skills/personal/       Skills I wrote
+skills/community/      Open-source skills I use, with their licenses
 ```
 
-`.mcp.json` registers `r-studio`, `mlb-stats` and `playwright` for this project; approve them when Claude Code asks. To use them in other projects too, add them at user scope, e.g.
-`claude mcp add -s user mlb-stats -- uvx --from git+https://github.com/etweisberg/mlb-mcp --with "mcp[cli]<2" python -m mlb_stats_mcp.server`.
+## Auto-handoff
 
-Install the Shiny plugin (from any directory):
+Long sessions get more expensive every turn, because each turn re-reads the whole history. When a session reaches 300k context tokens, this mod shows a toast, lets the current turn finish, and then has Claude run the `handoff` skill. That writes `HANDOFF.md`, records what went wrong in project memory, and gives you a kickoff prompt for a fresh session.
+
+It fires once per session and re-arms if `/clear` or `/compact` drops the context below 150k. Both values are constants at the top of [`hooks/register.ts`](mods/auto-handoff/hooks/register.ts).
+
+Install it from inside Claude Code:
 
 ```
 /plugin marketplace add jackhuffardiii/claude-desktop-mods
-/plugin install rshiny@claude-desktop-mods
+/plugin install auto-handoff@claude-desktop-mods
 ```
 
-Then, from a folder containing `app.R`: `/rshiny-run "open the pitcher tab and pick Skenes"`, `/rshiny-logs`, `/rshiny-status`, `/rshiny-stop` (namespaced form: `/rshiny:rshiny-run`).
-The plugin's skills use `bash`, `lsof` and `curl`, so on Windows run Claude Code under WSL or Git Bash.
+The mod depends on the `handoff` skill, so copy that too:
 
-## Claude Desktop (chat app)
+```bash
+cp -R skills/personal/handoff ~/.claude/skills/
+```
 
-1. In RStudio, run `source("setup/install_clauder.R")`. This installs ClaudeR and adds the `r-studio` server to your Desktop config.
-2. Open **Settings → Developer → Edit Config** and merge the `mlb-stats` entry from [`desktop/claude_desktop_config.json`](desktop/claude_desktop_config.json) into `mcpServers`.
-3. Restart Claude Desktop.
+## Skills
 
-## Every session with ClaudeR
+To use any skill, copy its folder into `~/.claude/skills/`.
 
-In RStudio run `ClaudeR::claudeAddin()` and click **Start Server**. Claude can't reach your R session until you do.
+### Personal
 
-## Notes
+| Skill | What it does |
+| --- | --- |
+| [handoff](skills/personal/handoff) | Writes a handoff for a fresh session, or resumes from one |
+| [model-audit](skills/personal/model-audit) | Audits a model against a fixed checklist: leakage, splits, CV, calibration, drift, sample size |
+| [project-intake](skills/personal/project-intake) | Interviews me and gets a written spec approved before any code on a new project |
+| [slide-craft](skills/personal/slide-craft) | Rules for decks: one idea per slide, headline titles, low cognitive load |
+| [sports-mle-workflow](skills/personal/sports-mle-workflow) | Builds sports models as repeatable pipelines, from the decision through in-season refreshes. Adapted from [ECC](https://github.com/affaan-m/ECC) (MIT) |
 
-- `mlb-mcp` is pinned to `mcp<2`: the upstream code uses the v1 `FastMCP` API, which the `mcp` 2.x release removed, and it fails to start without the pin.
-- The marketplace lists the Shiny plugin as `rshiny` because Claude Code reserves plugin names that start with `claude-`.
+These are written for my own workflow, so they refer to me by name. Change those references if you adapt them.
+
+### Community
+
+| Skills | What they do | Source | License |
+| --- | --- | --- | --- |
+| [superpowers](skills/community/superpowers) (15) | Process skills: brainstorming, plans, debugging, TDD, code review | [obra/superpowers](https://github.com/obra/superpowers) | MIT |
+| [ponytail](skills/community/ponytail) (6) | Pushes toward the simplest code that works, plus over-engineering audits | [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail) | MIT |
+| [taste-skill](skills/community/taste-skill) (13) | Frontend art direction | [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill) | MIT |
+| [fable-advisor](skills/community/fable-advisor) (1) | Routes work between model tiers to control cost | [DannyMac180/fable-advisor](https://github.com/DannyMac180/fable-advisor) | MIT |
+| [frontend-design](skills/community/frontend-design) (1) | Distinctive UI design guidance | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official) | Apache 2.0 |
+| [find-skills](skills/community/find-skills) (1) | Finds and installs skills | [vercel-labs/skills](https://github.com/vercel-labs/skills) | MIT |
+| [grill-me](skills/community/grill-me) (1) | Interviews me about a plan until it holds up | [MCPmarket](https://mcpmarket.com) | MIT |
+
+These are snapshots, so the source repos are the place to get updates.
+
+### Used but not copied here
+
+- Anthropic's built-in `docx`, `pdf`, `pptx`, and `xlsx` skills are proprietary and come with Claude.
+- Skills specific to one project stay in that project.
+
+## The rest of the setup
+
+- [RTK](https://github.com/rtk-ai/rtk) condenses command output through a Claude Code hook.
+- Ponytail's hooks keep its mode active across sessions and subagents.
+- The status line combines [Get Shit Done](https://github.com/glittercowboy/get-shit-done) with a small context-usage script of my own.

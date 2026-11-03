@@ -1,0 +1,192 @@
+<title>PLAN_NAME — plan</title>
+<!--
+  Plan page template for the project-intake skill.
+  Replace ALL_CAPS placeholders. Delete sections that don't apply (a one-file
+  script doesn't need an architecture diagram; padding one is worse than cutting it).
+  Keep the ID gutter — it is the whole interaction model.
+-->
+<style>
+  :root {
+    --bg: #f4f6f7; --panel: #ffffff; --ink: #16202a; --muted: #5d6b78;
+    --line: #d3dbe2; --rule: #b9c5ce;
+    --accent: #17516e; --accent-soft: #e2ecf2;
+    --warn: #8a5a12; --warn-soft: #f7efdf;
+    --cut: #7d4145; --cut-soft: #f4e6e6;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #12171c; --panel: #1a2027; --ink: #e6ebf0; --muted: #8fa0ae;
+      --line: #2a333c; --rule: #3a4650;
+      --accent: #6fb2d6; --accent-soft: #16303f;
+      --warn: #d3a45e; --warn-soft: #2c2417;
+      --cut: #cf8b8b; --cut-soft: #2d1e1f;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #12171c; --panel: #1a2027; --ink: #e6ebf0; --muted: #8fa0ae;
+    --line: #2a333c; --rule: #3a4650;
+    --accent: #6fb2d6; --accent-soft: #16303f;
+    --warn: #d3a45e; --warn-soft: #2c2417;
+    --cut: #cf8b8b; --cut-soft: #2d1e1f;
+  }
+
+  body {
+    background: var(--bg); color: var(--ink);
+    font: 16px/1.6 var(--sans);
+    margin: 0; padding: 3rem 1.25rem 6rem;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 62rem; margin: 0 auto; }
+
+  header { border-bottom: 2px solid var(--rule); padding-bottom: 1.5rem; }
+  .eyebrow { font: 500 .7rem/1 var(--mono); letter-spacing: .16em; text-transform: uppercase;
+             color: var(--muted); margin: 0 0 .9rem; }
+  h1 { font-size: clamp(1.75rem, 4.5vw, 2.6rem); line-height: 1.1; margin: 0 0 .7rem;
+       letter-spacing: -.025em; font-weight: 600; text-wrap: balance; }
+  .claim { font-size: 1.08rem; color: var(--muted); margin: 0; max-width: 44rem; text-wrap: pretty; }
+  .meta { display: flex; flex-wrap: wrap; gap: .45rem .9rem; align-items: center; margin-top: 1.4rem;
+          font: 500 .72rem/1 var(--mono); letter-spacing: .04em; color: var(--muted); }
+  .status { letter-spacing: .12em; text-transform: uppercase; padding: .3rem .5rem;
+            border: 1px solid var(--warn); color: var(--warn); background: var(--warn-soft); }
+  .status.approved { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+
+  .howto { background: var(--accent-soft); color: var(--ink); padding: .9rem 1.1rem;
+           margin-top: 1.75rem; font-size: .9rem; border: 1px solid var(--line); }
+  .howto b { color: var(--accent); }
+  .howto code, .meta code { font: 600 .85em var(--mono); background: var(--panel);
+                            padding: .12rem .4rem; border: 1px solid var(--line); }
+
+  section { margin-top: 3rem; }
+  h2 { font: 600 .72rem/1 var(--mono); letter-spacing: .16em; text-transform: uppercase;
+       color: var(--muted); margin: 0 0 .2rem; padding-bottom: .7rem; border-bottom: 1px solid var(--rule); }
+
+  /* the ledger row: id in the gutter, claim in the body */
+  .row { display: grid; grid-template-columns: 4.25rem 1fr; gap: 1rem;
+         padding: .85rem 0; border-bottom: 1px solid var(--line); align-items: baseline; }
+  .row:last-child { border-bottom: none; }
+  .id { font: 600 .74rem/1.5 var(--mono); letter-spacing: .05em; color: var(--accent);
+        border: 1px solid var(--line); background: var(--panel); text-align: center;
+        padding: .15rem 0; user-select: all; font-variant-numeric: tabular-nums; }
+  .row p { margin: 0; text-wrap: pretty; }
+  .why { display: block; color: var(--muted); font-size: .89rem; margin-top: .3rem; }
+
+  .cut .id { color: var(--cut); background: var(--cut-soft); border-color: var(--cut-soft); }
+  .cut > p { color: var(--muted); }
+  .ask .id { color: var(--warn); background: var(--warn-soft); border-color: var(--warn-soft); }
+
+  /* architecture: themed boxes, not Mermaid (which ships its own light theme) */
+  .diagram { background: var(--panel); border: 1px solid var(--line); padding: 1.5rem 1.25rem 1.25rem; margin: 0; }
+  .flow { display: flex; align-items: stretch; overflow-x: auto; padding-bottom: .5rem; }
+  .stage { flex: 0 0 auto; min-width: 6.4rem; text-align: center; border: 1px solid var(--rule);
+           background: var(--bg); padding: .7rem .55rem; font: 500 .78rem/1.35 var(--sans); }
+  .stage small { display: block; font: 500 .63rem/1.3 var(--mono); color: var(--muted);
+                 margin-top: .25rem; letter-spacing: .04em; }
+  .stage.gate { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); font-weight: 650; }
+  .stage.loop { border-style: dashed; }
+  .arrow { flex: 0 0 auto; align-self: center; padding: 0 .5rem; font: 500 .9rem var(--mono); color: var(--muted); }
+  .legend { display: flex; flex-wrap: wrap; gap: 1.25rem; margin-top: 1rem;
+            font: 500 .72rem/1.4 var(--mono); color: var(--muted); }
+  .legend span::before { content: "— "; }
+  figcaption { color: var(--muted); font-size: .85rem; margin-top: 1rem; }
+  figcaption code { font: 600 .85em var(--mono); color: var(--accent); }
+
+  .scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: .92rem; min-width: 34rem; }
+  th, td { text-align: left; padding: .7rem .7rem .7rem 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font: 600 .68rem/1 var(--mono); letter-spacing: .12em; text-transform: uppercase;
+       color: var(--muted); padding-bottom: .8rem; }
+  td.id-cell { font: 600 .74rem var(--mono); color: var(--accent); white-space: nowrap; }
+  td code { font: .88em var(--mono); color: var(--muted); }
+</style>
+
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">Plan · PROJECT_KIND</p>
+  <h1>PLAN_NAME</h1>
+  <p class="claim">ONE_OR_TWO_SENTENCES_SAYING_WHAT_THIS_IS_AND_WHY_IT_EXISTS</p>
+  <div class="meta">
+    <span class="status">draft</span><!-- on approval: class="status approved", text "approved" -->
+    <span>PLAN_DATE</span>
+    <span>spec: <code>SPEC_PATH</code></span>
+  </div>
+</header>
+
+<div class="howto">
+  <b>Every block has an ID.</b> To change one, say <code>A2 should be X, not Y</code>
+  and only that block gets edited. IDs are never reused or renumbered, so a reference you type now
+  still points at the same thing ten messages later.
+</div>
+
+<section>
+  <h2>Problem</h2>
+  <div class="row"><span class="id">P1</span><p>WHAT_IS_BROKEN_OR_MISSING_NOW<span class="why">Why it costs something to leave alone.</span></p></div>
+</section>
+
+<section>
+  <h2>Who it's for</h2>
+  <div class="row"><span class="id">U1</span><p>WHO_USES_THIS_AND_WHERE</p></div>
+</section>
+
+<section>
+  <h2>Architecture</h2>
+  <figure class="diagram">
+    <div class="flow">
+      <div class="stage">STAGE<small>detail</small></div>
+      <div class="arrow">→</div>
+      <div class="stage loop">LOOPING_STAGE<small>detail</small></div>
+      <div class="arrow">→</div>
+      <div class="stage gate">GATE<small>detail</small></div>
+      <div class="arrow">→</div>
+      <div class="stage">STAGE<small>detail</small></div>
+    </div>
+    <div class="legend">
+      <span>dashed = repeats until done</span>
+      <span>solid blue = the decision point</span>
+    </div>
+    <figcaption>Comment on the diagram as <code>ARCH</code>. WHAT_THE_READER_SHOULD_NOTICE_FIRST.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>In scope</h2>
+  <div class="row"><span class="id">S1</span><p>SCOPE_ITEM<span class="why">Optional: the constraint behind it.</span></p></div>
+  <div class="row"><span class="id">S2</span><p>SCOPE_ITEM</p></div>
+</section>
+
+<section>
+  <h2>Deliberately not in v1</h2>
+  <div class="row cut"><span class="id">X1</span><p>DEFERRED_THING<span class="why">Why deferred, and what would bring it back.</span></p></div>
+</section>
+
+<section>
+  <h2>Approach</h2>
+  <div class="row"><span class="id">A1</span><p>DECISION<span class="why">The reasoning, in one line. A decision without its reason can't be argued with.</span></p></div>
+</section>
+
+<section>
+  <h2>Data</h2>
+  <div class="scroll"><table>
+    <tr><th>id</th><th>what</th><th>where it comes from</th><th>where it lives</th></tr>
+    <tr><td class="id-cell">D1</td><td>THING</td><td>SOURCE</td><td><code>PATH_OR_STORE</code></td></tr>
+  </table></div>
+</section>
+
+<section>
+  <h2>Done means</h2>
+  <div class="row"><span class="id">C1</span><p>TESTABLE_CRITERION</p></div>
+</section>
+
+<section>
+  <h2>Assumptions I made without asking</h2>
+  <div class="row ask"><span class="id">Q1</span><p>ASSUMPTION_OR_OPEN_QUESTION<span class="why">What changes if this is wrong.</span></p></div>
+</section>
+
+<section>
+  <h2>Build order</h2>
+  <div class="row"><span class="id">B1</span><p>FIRST_RUNNABLE_THING<span class="why">Rough size.</span></p></div>
+</section>
+
+</div>

@@ -1,0 +1,7 @@
+{
+  "name": "auto-handoff",
+  "version": "0.1.0",
+  "description": "At 300k context tokens, flags you and has Claude run the handoff skill (HANDOFF.md + project pitfalls) once the current turn ends.",
+  "author": { "name": "Jack Huffard" },
+  "types": "./types/index.d.ts"
+}
