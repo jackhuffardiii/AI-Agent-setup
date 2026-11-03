@@ -35,7 +35,7 @@ Most work doesn't need all nine stages, and running them anyway is its own failu
 Start with the person, not the data. Before any model exists, I want to be able to say who would act on this, what they'd do differently, and what a wrong answer would cost them.
 
 - Go back to the roots: what do they want, what did they give us, and what do we already have?
-- Take ideas from coaches and scouts seriously, then translate them into something testable. They often know the effect is real before the data shows it.
+- Take ideas from coaches and scouts seriously, then translate them into something testable. Their read on a player can point to something worth testing.
 - Check what's possible before comparing options, so nobody falls in love with something the data can't support.
 - "Don't do this" is a good result. It's the cheapest one a project can produce.
 
@@ -47,7 +47,7 @@ Decide here who has to be able to explain the result. If I'll be defending it in
 
 ## 3. Earn trust in the data
 
-Most serious mistakes in sports analytics start here, and they often don't throw errors. A blank ID can produce a complete, clean, empty report. Treat every source as wrong until it's been checked.
+Many of the costliest mistakes I've run into started here, and they often don't throw errors. A blank ID can produce a complete, clean, empty report. Treat every source as wrong until it's been checked.
 
 - **Reconcile totals.** Totals in the output should match a count from the source. If the plate appearances on a report don't equal their parts, stop.
 - **Check grain before joining.** Know what one row means and whether the table is split the way the plan assumes. Look for duplicate rows after each join.
