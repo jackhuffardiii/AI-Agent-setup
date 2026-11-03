@@ -1,4 +1,4 @@
-# claude-desktop-mods
+# AI-Agent-setup
 
 The Claude Code setup I use for baseball analytics, modeling, and general project work: an end-to-end workflow, one custom mod, and the skills I rely on.
 
@@ -21,8 +21,8 @@ It fires once per session and re-arms if `/clear` or `/compact` drops the contex
 Install it from inside Claude Code:
 
 ```
-/plugin marketplace add jackhuffardiii/claude-desktop-mods
-/plugin install auto-handoff@claude-desktop-mods
+/plugin marketplace add jackhuffardiii/AI-Agent-setup
+/plugin install auto-handoff@ai-agent-setup
 ```
 
 The mod depends on the `handoff` skill, so copy that too:
