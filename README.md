@@ -1,8 +1,11 @@
 # claude-desktop-mods
 
-The Claude Code setup I use for baseball analytics, modeling, and general project work: one custom mod and the skills I rely on.
+The Claude Code setup I use for baseball analytics, modeling, and general project work: an end-to-end workflow, one custom mod, and the skills I rely on.
+
+Start with [the analytics project workflow](WORKFLOW.md), which shows how the pieces fit together.
 
 ```
+WORKFLOW.md            How I run an analytics project, start to finish
 .claude-plugin/        Plugin marketplace manifest
 mods/auto-handoff/     Hands long sessions off to a fresh one
 skills/personal/       Skills I wrote
