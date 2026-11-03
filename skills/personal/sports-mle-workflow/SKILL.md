@@ -171,3 +171,7 @@ Team data, internal grades, and medical information stay out of public repos, lo
 ## Output
 
 Return concrete artifacts: the decision sheet, data contract, gates, pipeline steps, test plan, or refresh plan. Call out unknowns that block trust rather than filling them with assumptions. Never invent a metric or result, and mark anything not verified by running code as `(unverified)`.
+
+## Attribution
+
+Adapted from the `mle-workflow` skill in [ECC](https://github.com/affaan-m/ECC), used under the MIT license. See [LICENSE](LICENSE).
