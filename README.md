@@ -38,7 +38,8 @@ To use any skill, copy its folder into `~/.claude/skills/`.
 | --- | --- |
 | [handoff](skills/personal/handoff) | Writes a handoff for a fresh session, or resumes from one |
 | [model-audit](skills/personal/model-audit) | Audits a model against a fixed checklist: leakage, splits, CV, calibration, drift, sample size |
-| [project-intake](skills/personal/project-intake) | Interviews me and gets a written spec approved before any code on a new project |
+| [brainstorm](skills/personal/brainstorm) | Explores directions, recommends one, and hands a brief to `project-intake` |
+| [project-intake](skills/personal/project-intake) | Interviews me and gets a written spec approved before any code, or grills a plan or draft I already have |
 | [slide-craft](skills/personal/slide-craft) | Rules for decks: one idea per slide, headline titles, low cognitive load |
 | [sports-mle-workflow](skills/personal/sports-mle-workflow) | Builds sports models as repeatable pipelines, from the decision through in-season refreshes. Adapted from [ECC](https://github.com/affaan-m/ECC) (MIT) |
 
@@ -48,15 +49,10 @@ These are written for my own workflow, so they refer to me by name. Change those
 
 | Skills | What they do | Source | License |
 | --- | --- | --- | --- |
-| [superpowers](skills/community/superpowers) (15) | Process skills: brainstorming, plans, debugging, TDD, code review | [obra/superpowers](https://github.com/obra/superpowers) | MIT |
-| [ponytail](skills/community/ponytail) (6) | Pushes toward the simplest code that works, plus over-engineering audits | [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail) | MIT |
-| [taste-skill](skills/community/taste-skill) (13) | Frontend art direction | [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill) | MIT |
+| [ponytail](skills/community/ponytail) (3) | Pushes toward the simplest code that works, plus over-engineering audits | [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail) | MIT |
 | [fable-advisor](skills/community/fable-advisor) (1) | Routes work between model tiers to control cost | [DannyMac180/fable-advisor](https://github.com/DannyMac180/fable-advisor) | MIT |
-| [frontend-design](skills/community/frontend-design) (1) | Distinctive UI design guidance | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official) | Apache 2.0 |
-| [find-skills](skills/community/find-skills) (1) | Finds and installs skills | [vercel-labs/skills](https://github.com/vercel-labs/skills) | MIT |
-| [grill-me](skills/community/grill-me) (1) | Interviews me about a plan until it holds up | [MCPmarket](https://mcpmarket.com) | MIT |
 
-These are snapshots, so the source repos are the place to get updates.
+These are snapshots of only the skills I use, so the source repos have the full sets and any updates.
 
 ### Used but not copied here
 

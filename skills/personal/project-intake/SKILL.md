@@ -1,54 +1,71 @@
 ---
 name: project-intake
-description: Interview the user thoroughly before building anything new, then write a spec file, publish it as a visual plan page whose every block is individually commentable, and get explicit approval before any code is written. Use this whenever the user starts a new project, app, tool, script, or repo, or floats a new idea they want built ("I want to build...", "I have an idea for...", "let's make a...", "new project", "thinking about building", "wouldn't it be cool if"), and whenever a request would create a new codebase or a substantial new feature whose shape isn't already pinned down. Use it even when the idea sounds simple and even when the user seems ready to start coding immediately, because a wrong assumption locked in at line one is the expensive kind. Do NOT use for bug fixes, small edits to existing code, questions, or work whose spec is already written and approved.
+description: Interview Jack before anything new gets built, or grill a plan or draft he already has. Intake mode ends in a written spec, a commentable plan page, and explicit approval before any code. Grill mode pressure-tests an existing plan, design, or written answer one decision at a time. Use when Jack starts a new project, app, tool, script, or substantial feature ("I want to build", "I have an idea for", "let's make", "new project", "can we make something like this"), or when he says "grill me", "pressure-test this", "poke at this plan", or "grill my answers". Use brainstorm first if he is still choosing between directions. Use model-audit to review a finished model. Do NOT use for bug fixes, small edits, plain questions, or work with an approved spec.
 ---
 
 # Project intake
 
-The failure mode this exists to prevent: the user describes an idea in two sentences, Claude fills the other fifty decisions with its own defaults, builds fast, and delivers something adjacent to what they wanted. Rewriting is more expensive than asking. So before any code exists, extract the real plan and get it approved in writing.
+A two-sentence idea leaves fifty decisions open. If Claude fills them with defaults and builds fast, Jack gets something adjacent to what he wanted. Asking costs less than rewriting, so settle the real plan before any code exists.
 
-The user asked for this explicitly. They want to be asked. Do not shortcut it to seem efficient — silence here reads as guessing, not speed.
+**Pick the mode from what exists:**
 
-## The rule
+- **Intake:** something new needs to be built. Follow every step below.
+- **Grill:** a plan, design, or draft already exists and needs testing. Do steps 1 and 2, then give the summary in "Finish a grill". Write a spec only if he then wants it built.
+- **Still choosing a direction:** use `brainstorm` first. If a brief from `brainstorm` exists, start from it and don't re-ask what it settled.
 
-**Write no implementation code until the spec file is written and the user has approved it.** Reading the codebase, checking what exists, and researching APIs is fine and encouraged during the interview. Creating source files, scaffolding a repo, or installing dependencies is not.
+**The rule: no implementation until the spec is written and Jack has approved it.** Reading code, querying data, and researching are encouraged. Creating source files, scaffolding, and installing dependencies wait. If he asks to skip ahead, write down the assumptions in a few lines and let him decide.
 
-## 1. Ground yourself first
+## 1. Check the facts first
 
-Before the first question, spend a moment on cheap context so you don't ask things you could have looked up:
+Answer whatever you can yourself, so that questions go to real decisions:
 
-- Is there an existing repo, related project, or prior attempt at this? Glob/grep for it.
-- Does the user's CLAUDE.md or memory already state a preference that answers a question you were about to ask (stack, conventions, where files go)?
+- **Existing work:** look for a related repo, an earlier attempt, or code to build on. Check `CLAUDE.md` and memory for stated preferences.
+- **Data, when the project uses any:** check that it can support the idea before designing around it. Confirm which columns exist, what level they're split by, how many years they cover, and whether IDs and names are clean. If the data limits the idea, say so in the first round, along with what that does to the modeling.
+- **Links he sends:** read any repo, post, or example before asking about it. Say what's reusable and whether it would overcomplicate things.
 
-Every question you can answer yourself is one the user doesn't have to. Bring what you found into the first round: "I see you already have X — is this building on it or replacing it?" is a better opening than "what's your tech stack?"
+Open with what you found: "You already have X. Is this building on it or replacing it?"
 
-## 2. Interview in rounds
+## 2. Interview
 
-Use the AskUserQuestion tool, **3-5 questions per round**, with concrete options rather than open prompts. A question with options is faster to answer and surfaces choices the user hadn't considered. Mark your recommendation "(Recommended)" and put it first — you have context, use it. Free-text answers are always available to them, so options don't constrain.
+Use `AskUserQuestion` with concrete options. Put your recommendation first, marked "(Recommended)". Jack often answers in a couple of words, so make each option a real choice he can pick quickly.
 
-Round one covers the load-bearing decisions. Adapt to what's actually uncertain — do not walk a fixed checklist:
+**Walk the decision tree:**
 
-- **Problem** — what's broken or missing now, and what does "solved" look like concretely?
-- **Users** — just them, a team, the public? This drives almost everything downstream.
-- **Scope** — the smallest version worth having (v1), versus what's explicitly out for now.
-- **Shape** — CLI, script, web app, R package, Shiny app, notebook, service? Where does it run?
-- **Data** — what goes in, where does it come from, where does state live?
-- **Success** — how will they know it works? What do they check?
-- **Constraints** — deadline, existing systems it must fit, things it must not touch.
+- Ask a decision alone when its answer would change other questions. "Replacing it or extending it?" comes before anything downstream.
+- Batch up to 4 questions only when they're independent of each other.
+- In grill mode, stay on one branch until it's settled. Name what's still open so he knows how much is left.
+- After each settled branch, restate the decision in one line so he can correct it.
+- Name dependencies out loud: "Picking X rules out Y."
 
-**Then keep going.** After each round, ask yourself: if I started building right now, what would I be guessing about? Every real answer to that is the next round. Two or three rounds is normal. Stop when the only open questions are ones where any reasonable choice would be fine — and say which ones those are and what you're choosing.
+**Push back.** If a decision looks risky, contradictory, or more complicated than it needs to be, say so and why. Then respect his call. Explain any term he might not use day to day, and answer his questions fully before moving on, since they often reveal a problem with the plan.
 
-Scale the depth honestly. A one-off 30-line script does not need three rounds; a new app does. Under-asking on something large is the failure this skill exists to prevent, so when unsure, ask the extra round.
+**Cover what's actually uncertain,** not a fixed checklist:
 
-**Do not batch a question you should ask alone.** If an answer would invalidate half your other questions (e.g. "is this replacing the existing system or extending it?"), ask that first, by itself, then build the round around the answer.
+- **Problem:** what's missing now, and what does solved look like?
+- **Users:** just Jack, a staff, or the public?
+- **Scope:** the smallest version worth having, and what waits.
+- **Shape:** script, Shiny app, R package, site, iOS app, report? Where does it run?
+- **Data:** what goes in, where it comes from, and where state lives.
+- **Success:** what will he check to know it works?
+- **Constraints:** deadlines, and systems it must fit or not touch.
+- **Explainability:** will he have to defend this in an interview, a writeup, or to a coach? If so, prefer the method he can explain, and ask whether he wants code to run and walk through himself rather than files written for him.
+- **How it gets built:** which model or agents write it, which reviews run, who tests it, and where it deploys. Ask this last in intake. Jack has strong and specific views here.
 
-## 3. Write the spec, then publish it as a visual plan
+**Keep going until you'd stop guessing.** After each round, ask: if I started building now, what would I be guessing about? Two or three rounds is normal for a project, and one is enough for a small script. Stop when any remaining choice would be fine, then say what you're choosing.
 
-Two deliverables, one source of truth. The **markdown spec** is the source of truth: it lives in the repo, it's greppable, it survives offline, and it's what implementation actually reads. The **published artifact** is the view: it's what the user reads and comments on. Write the spec first, then generate the page from it. They must never disagree.
+**Respect the clock.** If there's a hard deadline, ask only what would change the result, and put the rest in assumptions.
 
-Default spec location: the project root as `<slug>-spec.md`; inside Jack's Second Brain vault, `projects/<slug>.md` with the vault's frontmatter conventions instead. Confirm the path in the last question round rather than assuming.
+**Grilling written answers:** for an application or questionnaire draft, test whether each claim is true, specific, and answers what was asked. Use only numbers and experience Jack has stated, and ask where one is missing. Check the rules first: if the application bans AI help, say so and don't draft for him.
 
-Structure:
+## Finish a grill
+
+Give a short summary: decisions made, risks he accepted, and anything still open. Then ask whether to fix it now, write a spec, or stop. Don't write code in this mode.
+
+## 3. Write the spec, then publish the plan page
+
+The markdown spec is the source of truth, and the page is the view Jack reads and comments on. Write the spec first and generate the page from it. They must never disagree.
+
+**Location:** `<slug>-spec.md` at the project root. Inside his Second Brain vault, use `projects/<slug>.md` with the vault's frontmatter. Code itself never goes in the vault. Confirm the path in the last round.
 
 ```markdown
 # <Name>
@@ -58,58 +75,63 @@ Structure:
 ## Problem
 ## Users
 ## v1 scope
-<Numbered list. Each item concrete enough to verify as done.>
+<Numbered, and concrete enough to verify as done.>
 
-## Explicitly out of scope
-<The things you asked about and they said "not now." This section prevents scope creep more than any other.>
+## Not in v1
+<Tag each item "later" or "never". Most of what gets cut from v1 is deferred, not dropped.>
 
 ## Approach
-<Stack, architecture, key decisions, and the reasoning for each. One line each.>
+<Stack, architecture, and key decisions, with the reason for each in one line.>
 
 ## Data
-<Inputs, sources, storage, formats.>
+<Inputs, sources, storage, formats, and what you verified in step 1.>
 
 ## Success criteria
 <How we'll know v1 works. Testable.>
 
 ## Open questions and assumptions
-<Anything unresolved, plus every default you chose without asking. This is where the user catches you.>
+<Anything unresolved, plus every default you chose without asking.>
 
 ## Build order
-<The sequence of work, roughly sized. First item should be something runnable.>
+<Roughly sized. The first item should be something runnable.>
+
+## How we build it
+<Who writes the code, which reviews run, who tests, where it deploys.>
 ```
 
-The "Open questions and assumptions" section is not optional and is rarely empty. Listing your assumptions is how the user catches a wrong one before it costs anything.
+The assumptions section is required and is rarely empty. It's where Jack catches a wrong guess before it costs anything. Follow his writing rules: lead with the claim, no em dashes, no hype.
 
-Write it in the user's voice conventions if they have them (Jack's: lead with the claim, no em dashes, no hype, terse and factual).
+### Every item gets a stable ID
 
-### Every claim gets a stable ID
+Prefix by section: `P` problem, `U` users, `S` v1 scope, `X` not in v1, `A` approach, `D` data, `C` success criterion, `Q` assumption or open question, `B` build step, `V` how we build, plus `ARCH` for the diagram. If a project needs a section of its own, give it a new prefix. Use the IDs in the markdown too.
 
-Prefix by section so an ID says what it refers to on sight: `P` problem, `U` users, `S` v1 scope, `X` out of scope, `A` approach decision, `D` data, `C` success criterion, `Q` assumption or open question, `B` build step, plus the bare word `ARCH` for the architecture diagram.
-
-Put these IDs in the markdown spec too, not just the page. Six months later "why did we do A3 that way" should be answerable with grep.
-
-**IDs are assigned once and never reused or renumbered.** When S3 gets cut, S3 stays retired and the next new item is S9 — do not close the gap. Renumbering silently repoints every reference the user has already made, so a comment they typed a minute ago now lands on different text. Gaps are free; collisions are not.
+**IDs are assigned once and never reused or renumbered.** When S3 is cut it stays retired, and the next item is the next unused number. Renumbering would silently repoint anything he has already referenced.
 
 ### Publish the page
 
-Build it from `assets/plan-template.html` in this skill directory. Copy it to the workspace, replace the placeholder content, publish with the Artifact tool. The template already carries the page design and light/dark theming, so don't re-derive one — load `artifact-diagramming` before drawing the architecture diagram, and only load `artifact-design` if you're departing from the template substantially.
+Build it from `assets/plan-template.html` in this skill's folder, and publish with the Artifact tool. Load `artifact-diagramming` before drawing the diagram. The template already handles design and theming.
 
-The architecture diagram is the part worth real thought. It should show the actual mechanism — what flows where, what stores state, where the boundaries are — not a row of pretty boxes restating the section headers. If the project is too small to have an architecture, cut the diagram rather than padding it; a one-file script doesn't need a flowchart.
+The diagram should show the real mechanism: what flows where, what stores state, and where the boundaries are. If the project is too small to have an architecture, cut it.
 
-Write the artifact to a **stable file path** and reuse it on every republish, so the URL never changes across the comment loop. The user will have it open in a tab.
+Write to one stable file path and reuse it, so the URL stays the same through the loop.
 
-## 4. The comment loop
+## 4. Comment loop
 
-Hand over the URL and the spec path, and ask plainly for one of three: **approve**, **change specific blocks**, or **kill it**. Ask whether they've actually read it — do not start building on a "sounds good" that arrived faster than the page could be read.
+Hand over the URL and spec path, then ask for one of three: **approve**, **change specific blocks**, or **kill it**. Don't start on a "sounds good" that arrived faster than the page could be read.
 
-When comments come back keyed to IDs ("A2 should be Postgres", "S4 is out of scope, and X2 is wrong"):
+When comments come back by ID ("A2 should be Postgres", "add S13 and S14"):
 
-1. Edit the markdown spec, then regenerate and republish the page to the same path. Both, every time. A page that has drifted from the spec is worse than no page, because it's still convincing.
-2. Reply with what changed, by ID, in one line each. Not a re-listing of the whole plan — they can see the plan, they want the diff.
-3. When a comment reveals you misunderstood something structural, don't just patch the block they named. Say which other blocks the correction implicates and fix those too, or ask. One wrong assumption usually shows up in several places.
+1. Edit the spec, then republish the page to the same path, every time.
+2. Reply with what changed by ID, one line each. Don't re-list the plan.
+3. If a comment shows a structural misunderstanding, find the other blocks it affects and fix them or ask.
 4. Ask again.
 
-Loop until approved. Then flip the page's status from `draft` to `approved` (the template has a class for it) and republish, so the tab they left open says so.
+## 5. After approval
 
-Only after explicit approval does implementation start. Work through the build order. When reality contradicts the plan mid-build — it will — stop, update the spec and the page, and say which IDs moved. A stale plan is worse than none, and the whole point of the IDs is that keeping it current is cheap.
+Flip the page status from `draft` to `approved` and republish. Then:
+
+- **Follow "How we build it" exactly.** If Jack named agents or review skills, use those. If he said he'll test it himself, build it and stop there rather than driving the simulator or app.
+- **Offer a clean start for a big build.** If the intake ran long or the code belongs in a new folder, offer to write a handoff with the `handoff` skill so a fresh session can start there.
+- **Keep the plan true.** When reality contradicts the plan mid-build, stop, update the spec and page, and say which IDs moved.
+
+Scope ideas that come up during the build get added as new IDs rather than built silently.
