@@ -79,6 +79,18 @@ Build up from the baseline, and add complexity only when error analysis gives a 
 - **Cache slow fits by fingerprint.** Then a change to the inputs forces a refit, and nothing else does.
 - **Use agents with a written spec.** Cheaper models can write well-specified pieces, and each one still gets reviewed. The decisions about the model stay with me.
 
+### Delegated builds: brief, check, review
+
+When the build splits into pieces that don't touch the same files, Opus runs it as a loop instead of writing everything itself, using [`orchestration`](skills/community/fable-advisor/orchestration) and the Workflow tool.
+
+1. **Brief.** Opus splits the approved spec into briefs. Each brief has one goal, the files it may touch, its inputs and outputs, and the check that proves it's done. A worker shouldn't have to guess.
+2. **Build.** Workers run on Sonnet by default. Haiku only gets mechanical jobs like renames, formatting, and boilerplate tests. Anything that touches joins, splits, or model logic gets Sonnet or Opus.
+3. **Check each piece.** A check has to be able to fail, so it runs the tests from `TESTS.md` and compares the diff against the brief. A failure goes back to the worker with the error. After two failed retries, the piece goes to Opus.
+4. **Opus review.** Opus reads the whole diff against the spec, then runs `model-audit` on modeling code and [`ponytail-review`](skills/community/ponytail/ponytail-review) for bloat.
+5. **I approve.** Nothing merges until I've read the review.
+
+Keep it to two to four workers. Past that, each worker spends more time re-learning the project than it saves.
+
 ## 6. Try to break it
 
 Good numbers aren't enough, because a model can score well for the wrong reasons. This is the stage that protects my credibility.
@@ -138,7 +150,7 @@ Long sessions get expensive and start to drift, so I keep the project's memory i
 | `<slug>-spec.md` | The plan and its stable IDs, updated whenever the build changes it |
 | `TESTS.md` | Tests declared in advance and their results, including failures |
 | `HANDOFF.md` | Current state, decisions not to relitigate, what was ruled out, and next steps |
-| `CLAUDE.md` or `MEMORY.md` | Known traps and project rules |
+| `<folder-name>.md` or `MEMORY.md` | Known traps and project rules |
 
 The [auto-handoff mod](mods/auto-handoff) triggers `handoff` at 300k tokens, and a fresh session picks up from there.
 
