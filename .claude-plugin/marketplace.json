@@ -9,6 +9,11 @@
       "name": "auto-handoff",
       "source": "./mods/auto-handoff",
       "description": "At 300k context tokens, runs the handoff skill once the current turn ends."
+    },
+    {
+      "name": "improve-prompt",
+      "source": "./mods/improve-prompt",
+      "description": "Improve Prompt button: asks a few clarifying questions, then rewrites your draft."
     }
   ]
 }
