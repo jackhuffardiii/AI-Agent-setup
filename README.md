@@ -1,6 +1,6 @@
 # AI-Agent-setup
 
-The Claude Code setup I use for baseball analytics, modeling, and general project work: an end-to-end workflow, one custom mod, and the skills I rely on.
+The Claude Code setup I use for baseball analytics, modeling, and general project work: an end-to-end workflow, two custom mods, and the skills I rely on.
 
 Start with [the analytics project workflow](WORKFLOW.md), which shows how the pieces fit together.
 
@@ -8,6 +8,7 @@ Start with [the analytics project workflow](WORKFLOW.md), which shows how the pi
 WORKFLOW.md            How I run an analytics project, start to finish
 .claude-plugin/        Plugin marketplace manifest
 mods/auto-handoff/     Hands long sessions off to a fresh one
+mods/improve-prompt/   Rewrites your draft prompt after a few questions
 skills/personal/       Skills I wrote
 skills/community/      Open-source skills I use, with their licenses
 ```
@@ -29,6 +30,19 @@ The mod depends on the `handoff` skill, so copy that too:
 
 ```bash
 cp -R skills/personal/handoff ~/.claude/skills/
+```
+
+## Improve Prompt
+
+Adds an **Improve Prompt** button above the prompt box. Click it with a draft typed, and Claude reads the draft and the session so far, asks one to three clarifying questions, then replaces the draft with a rewritten prompt. Nothing is sent: you review the rewrite first. Dismissing a question cancels and leaves the draft alone.
+
+Each click makes two model calls at low effort. The two instructions that steer the questions and the rewrite sit at the top of [`hooks/register.tsx`](mods/improve-prompt/hooks/register.tsx).
+
+Install it from inside Claude Code:
+
+```
+/plugin marketplace add jackhuffardiii/AI-Agent-setup
+/plugin install improve-prompt@ai-agent-setup
 ```
 
 ## Skills

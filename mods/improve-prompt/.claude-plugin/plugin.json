@@ -1,0 +1,6 @@
+{
+  "name": "improve-prompt",
+  "version": "0.1.0",
+  "description": "Improve Prompt button: asks a few clarifying questions, then rewrites your draft.",
+  "author": { "name": "Jack Huffard" }
+}
